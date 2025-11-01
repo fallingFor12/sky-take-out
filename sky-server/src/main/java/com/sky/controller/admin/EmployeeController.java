@@ -112,4 +112,32 @@ public class EmployeeController {
         employeeService.startOrStop(status,id);
         return Result.success();
     }
+
+    /**
+     * 根据ID回显员工数据
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    //通过路径参数获取数据需要@PathVariable
+    @ApiOperation("员工信息查询")
+    public Result<Employee> getByIdInfo(@PathVariable Long id){
+        log.info("员工id：{}",id);
+        Employee employee = employeeService.getByIdInfo(id);
+        return Result.success(employee);
+    }
+
+    /**
+     * 员工信息修改
+     * @param employeeDTO
+     * @return
+     */
+    @PutMapping
+    @ApiOperation("员工信息修改")
+    //前端传递JSON格式的数据
+    public Result updateInfo(@RequestBody EmployeeDTO employeeDTO){
+        log.info("员工信息修改:{}",employeeDTO);
+        employeeService.updateInfo(employeeDTO);
+        return Result.success();
+    }
 }
