@@ -1,0 +1,19 @@
+**/target/
+.idea
+*.iml
+*.class
+*Test.java
+**/test/
+
+# 忽略包含敏感信息的配置文件
+# 主配置文件
+application.yml
+application.properties
+
+# 特定环境的配置文件
+application-dev.yml
+
+# 忽略数据库配置文件
+# 数据库配置文件
+*.yml
+*.properties
