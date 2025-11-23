@@ -13,10 +13,10 @@
         order by create_time desc
     </select>
 <!--修改员工数据-->
-    <update id="update">
+    <update id="update" parameterType="Employee">
         update employee
         <set>
-            <if test="name != null">uname = #{name},</if>
+            <if test="name != null">name = #{name},</if>
             <if test="username != null">username = #{username},</if>
             <if test="password != null">password = #{password},</if>
             <if test="phone != null">phone = #{phone},</if>
