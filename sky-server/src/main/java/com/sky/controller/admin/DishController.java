@@ -11,9 +11,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @Slf4j
@@ -22,6 +24,8 @@ import java.util.List;
 public class DishController {
     @Autowired
     private DishService dishService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 新增菜品
@@ -33,6 +37,10 @@ public class DishController {
     public Result save(@RequestBody DishDTO dishDTO){
         log.info("新增菜品：{}", dishDTO);
         dishService.saveWithFlavor(dishDTO);
+        //当新增菜品时，需要将存在Redis菜品所属的分类进行清理
+        String key = "dish_" + dishDTO.getCategoryId();
+        redisTemplate.delete(key);
+
         return Result.success();
     }
 
@@ -60,6 +68,11 @@ public class DishController {
     public Result deleteByIds(@RequestParam List<Long> ids){
         log.info("批量删除菜品：{}", ids);
         dishService.deleteByIds(ids);
+
+        //将所有菜品的缓存数据进行清理（以dish_开头）、
+        Set keys = redisTemplate.keys("dish_*");
+        redisTemplate.delete(keys);
+
         return Result.success();
     }
 
@@ -86,6 +99,11 @@ public class DishController {
     public Result updateById(@RequestBody DishDTO dishDTO){
         log.info("修改菜品：{}", dishDTO);
         dishService.updateWithFlavor(dishDTO);
+
+        //当修改菜品时，需要将清理所有分类;
+        Set keys = redisTemplate.keys("dish_*");
+        redisTemplate.delete(keys);
+
         return Result.success();
     }
 
@@ -100,6 +118,11 @@ public class DishController {
     public Result startOrStop(@PathVariable Integer status, Long id){
         log.info("修改菜品起售停售：{},{}",status,id);
         dishService.startOrStop(status,id);
+
+        //当修改菜品起售停售时，需要将清理所有分类;
+        Set keys = redisTemplate.keys("dish_*");
+        redisTemplate.delete(keys);
+
         return Result.success();
     }
     /**
