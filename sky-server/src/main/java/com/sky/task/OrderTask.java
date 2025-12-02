@@ -27,7 +27,7 @@ public class OrderTask {
     @Scheduled(cron = "0 * * * * ?") // 每分钟执行一次
     public void processTimeoutOrders(){
         log.info("定时处理超时订单：{}", LocalDateTime.now());
-        LocalDateTime time = LocalDateTime.now().plusMinutes(-2);
+        LocalDateTime time = LocalDateTime.now().plusMinutes(-15);
         List<Orders> ordersList = orderMapper.getByStatusAndOrderTimeLT(Orders.PENDING_PAYMENT,time);
         if (ordersList != null && ordersList.size() > 0){
             for (Orders orders : ordersList) {
